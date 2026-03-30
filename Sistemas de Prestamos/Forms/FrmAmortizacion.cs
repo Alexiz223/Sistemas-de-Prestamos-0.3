@@ -19,13 +19,48 @@ namespace Sistemas_de_Prestamos.Forms
         {
             InitializeComponent();
         }
+        public static class SesionFormularios
+        {
+            public static FrmPrestamos frmPrestamos = new FrmPrestamos();
+            public static Clientes frmClientes = new Clientes();
+            public static FrmPagos frmPagos = new FrmPagos();
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Clientes frm = new Clientes(); 
-            frm.Show();
-            this.Close(); 
+            // Guardar lo que está escrito en los TextBox de Amortización
+            SesionAmortizacion.NombreCliente = txtbox_Nombre.Text;
+
+            if (decimal.TryParse(txtbox_monto_deseado.Text, out decimal monto))
+                SesionAmortizacion.MontoDeseado = monto;
+
+            if (decimal.TryParse(txtbox_Sueldo.Text, out decimal sueldo))
+                SesionAmortizacion.Sueldo = sueldo;
+
+            if (int.TryParse(DTP_1.Text, out int plazo))
+                SesionAmortizacion.PlazoMeses = plazo;
+
+            if (int.TryParse(txtBox_Moras.Text, out int moras))
+                SesionAmortizacion.Moras = moras;
+
+            SesionAmortizacion.FechaInicio = DTP_2.Value;
+
+            // Ahora sí abrir Clientes
+            SesionFormularios.frmClientes.Show();
+            this.Hide();
+
         }
+
+        public static class SesionAmortizacion
+        {
+            public static string NombreCliente { get; set; }
+            public static decimal MontoDeseado { get; set; }
+            public static decimal Sueldo { get; set; }
+            public static int PlazoMeses { get; set; }
+            public static int Moras { get; set; }
+            public static DateTime FechaInicio { get; set; }
+        }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -148,8 +183,44 @@ namespace Sistemas_de_Prestamos.Forms
 
         private void FrmAmortizacion_Load(object sender, EventArgs e)
         {
+            txtbox_Nombre.Text = SesionAmortizacion.NombreCliente;
+            txtbox_monto_deseado.Text = SesionAmortizacion.MontoDeseado != 0 ? SesionAmortizacion.MontoDeseado.ToString("N2") : "";
+            txtbox_Sueldo.Text = SesionAmortizacion.Sueldo != 0 ? SesionAmortizacion.Sueldo.ToString("N2") : "";
+            DTP_1.Text = SesionAmortizacion.PlazoMeses != 0 ? SesionAmortizacion.PlazoMeses.ToString() : "";
+            txtBox_Moras.Text = SesionAmortizacion.Moras.ToString();
+            if (SesionAmortizacion.FechaInicio != DateTime.MinValue)
+                DTP_2.Value = SesionAmortizacion.FechaInicio;
 
         }
+
+        private void FrmAmortizacion_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                // Guardar lo que el usuario escribió en sesión
+                SesionAmortizacion.NombreCliente = txtbox_Nombre.Text;
+
+                if (decimal.TryParse(txtbox_monto_deseado.Text, out decimal monto))
+                    SesionAmortizacion.MontoDeseado = monto;
+
+                if (decimal.TryParse(txtbox_Sueldo.Text, out decimal sueldo))
+                    SesionAmortizacion.Sueldo = sueldo;
+
+                if (int.TryParse(DTP_1.Text, out int plazo))
+                    SesionAmortizacion.PlazoMeses = plazo;
+
+                if (int.TryParse(txtBox_Moras.Text, out int moras))
+                    SesionAmortizacion.Moras = moras;
+
+                SesionAmortizacion.FechaInicio = DTP_2.Value;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al guardar datos de amortización: " + ex.Message);
+            }
+        }
+
+
     }
 }
 

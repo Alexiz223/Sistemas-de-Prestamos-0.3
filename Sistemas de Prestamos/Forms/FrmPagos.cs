@@ -21,20 +21,26 @@ namespace Sistemas_de_Prestamos.Forms
 
         private void FormPagos_Load(object sender, EventArgs e)
         {
-            PagosDAL dal = new PagosDAL();
-            dataGridView1.DataSource = dal.ConsultarPagos();
+            try
+            {
+                PagosDAL dal = new PagosDAL();
+                dataGridView1.DataSource = dal.ConsultarPagos();
 
-            // Refrescar fondo disponible
-            FondoService fondoService = new FondoService();
-            decimal fondo = fondoService.ConsultarFondo();
-            lblFondoDisponible.Text = "FONDO DISPONIBLE: RD$ " + fondo.ToString("N2");
+                FondoService fondoService = new FondoService();
+                decimal fondo = fondoService.ConsultarFondo();
+                lblFondoDisponible.Text = "FONDO DISPONIBLE: RD$ " + fondo.ToString("N2");
 
-            // Recargar datos de sesión
-            textBox1.Text = SesionPagos.PrestamoID.ToString();
-            textBox2.Text = SesionPagos.MontoPagado.ToString();
-            Moratxt.Text = SesionPagos.Mora.ToString();
-            Fechapagodtp.Value = SesionPagos.FechaPago == DateTime.MinValue ? DateTime.Now : SesionPagos.FechaPago;
-            estadotxt.Text = SesionPagos.Estado;
+                textBox1.Text = SesionPagos.PrestamoID.ToString();
+                textBox2.Text = SesionPagos.MontoPagado.ToString();
+                Moratxt.Text = SesionPagos.Mora.ToString();
+                Fechapagodtp.Value = SesionPagos.FechaPago == DateTime.MinValue ? DateTime.Now : SesionPagos.FechaPago;
+                estadotxt.Text = SesionPagos.Estado;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar Pagos: " + ex.Message);
+            }
+
 
 
         }

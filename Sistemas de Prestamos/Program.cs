@@ -16,7 +16,7 @@ namespace Sistemas_de_Prestamos
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Sistemas_de_Prestamos.Forms.FrmLogin());
+            Application.Run(new Sistemas_de_Prestamos.Forms.FrmPagos());
         }
     }
 }

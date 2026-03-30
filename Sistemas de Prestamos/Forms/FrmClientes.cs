@@ -168,25 +168,25 @@ namespace Sistemas_de_Prestamos.Forms
 
         private void button6_Click(object sender, EventArgs e)
         {
+            // Guardar datos del cliente en sesión
             SesionClientes.Cedula = cedulatxt.Text;
             SesionClientes.Nombre = Nombretxt.Text;
             SesionClientes.Apellido = apellidotxt.Text;
             SesionClientes.Correo = correotxt.Text;
             SesionClientes.Telefono = Telefonotxt.Text;
-            decimal sueldo;
-            if (decimal.TryParse(sueldotxt.Text, out sueldo))
-            {
+
+            if (decimal.TryParse(sueldotxt.Text, out decimal sueldo))
                 SesionClientes.Sueldo = sueldo;
-            }
             else
-            {
-                SesionClientes.Sueldo = 0; 
-            }
+                SesionClientes.Sueldo = 0;
+
             SesionClientes.Garantia = garantiatxt.Text;
             SesionClientes.Direccion = direcciontxt.Text;
 
+            // Mostrar Pagos usando la instancia compartida
             SesionFormularios.frmPagos.Show();
-            this.Hide();
+            this.Hide(); // Ocultar Clientes, no cerrar
+
         }
 
         // 🔹 Evento para cargar datos al seleccionar fila
@@ -240,11 +240,35 @@ namespace Sistemas_de_Prestamos.Forms
             dataGridView1.Columns.Add("Saldo", "Saldo");
         }
 
+        public static class SesionAmortizacion
+        {
+            public static string NombreCliente { get; set; }
+            public static decimal MontoDeseado { get; set; }
+            public static decimal Sueldo { get; set; }
+            public static int PlazoMeses { get; set; }
+            public static int Moras { get; set; }
+            public static DateTime FechaInicio { get; set; }
+        }
+
         private void Btn_Amortizacion_Click(object sender, EventArgs e)
         {
+            // Guardar lo que está en los TextBox de Clientes
+            SesionAmortizacion.NombreCliente = Nombretxt.Text;
+            if (decimal.TryParse(sueldotxt.Text, out decimal sueldo))
+                SesionAmortizacion.Sueldo = sueldo;
+            else
+                SesionAmortizacion.Sueldo = 0;
+
+            SesionAmortizacion.MontoDeseado = 0; // si lo defines después en amortización
+            SesionAmortizacion.PlazoMeses = 0;
+            SesionAmortizacion.Moras = 0;
+            SesionAmortizacion.FechaInicio = DateTime.Now;
+
+            // Abrir amortización
             FrmAmortizacion frm = new FrmAmortizacion();
-            frm.Show(); // Abre el formulario
-            this.Hide(); // Oculta el formulario actual (opcional)
+            frm.Show();
+            this.Hide();
+
         }
     }
     }
