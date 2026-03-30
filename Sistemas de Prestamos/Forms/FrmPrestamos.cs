@@ -13,7 +13,7 @@ namespace Sistemas_de_Prestamos.Forms
         public FrmPrestamos()
         {
             InitializeComponent();
-            this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
+            this.Clienteid.Leave += new System.EventHandler(this.textBox1_Leave);
 
             FondoService fondoService = new FondoService();
             decimal fondo = fondoService.ConsultarFondo();
@@ -34,8 +34,8 @@ namespace Sistemas_de_Prestamos.Forms
             lblFondoDisponible.Text = "FONDO DISPONIBLE: RD$ " + fondo.ToString("N2");
 
             // Recargar datos de sesión (para que no se pierdan al volver)
-            textBox1.Text = SesionPrestamo.ClienteID.ToString();
-            textBox2.Text = SesionPrestamo.Monto.ToString();
+            Clienteid.Text = SesionPrestamo.ClienteID.ToString();
+            Monto.Text = SesionPrestamo.Monto.ToString();
             sueldotxt.Text = SesionPrestamo.Sueldo.ToString();
             garantiatxt.Text = SesionPrestamo.Garantia;
             if (SesionPrestamo.Meses >= numericUpDown1.Minimum && SesionPrestamo.Meses <= numericUpDown1.Maximum)
@@ -74,7 +74,7 @@ namespace Sistemas_de_Prestamos.Forms
             decimal monto;
             int meses;
 
-            if (decimal.TryParse(textBox2.Text, out monto) &&
+            if (decimal.TryParse(Monto.Text, out monto) &&
                 int.TryParse(numericUpDown1.Value.ToString(), out meses))
             {
                 decimal tasa = servicio.ObtenerTasa(meses);
@@ -102,14 +102,14 @@ namespace Sistemas_de_Prestamos.Forms
             PrestamosDAL dal = new PrestamosDAL();
 
             // Validar ClienteID
-            if (!int.TryParse(textBox1.Text.Trim(), out clienteId))
+            if (!int.TryParse(Clienteid.Text.Trim(), out clienteId))
             {
                 MessageBox.Show("ClienteID inválido.");
                 return;
             }
 
             // Validar monto
-            if (!decimal.TryParse(textBox2.Text.Trim(), out monto))
+            if (!decimal.TryParse(Monto.Text.Trim(), out monto))
             {
                 MessageBox.Show("Monto inválido.");
                 return;
@@ -183,13 +183,13 @@ namespace Sistemas_de_Prestamos.Forms
                 int clienteId;
                 decimal monto;
 
-                if (!int.TryParse(textBox1.Text.Trim(), out clienteId))
+                if (!int.TryParse(Clienteid.Text.Trim(), out clienteId))
                 {
                     MessageBox.Show("ClienteID inválido.");
                     return;
                 }
 
-                if (!decimal.TryParse(textBox2.Text.Trim(), out monto))
+                if (!decimal.TryParse(Monto.Text.Trim(), out monto))
                 {
                     MessageBox.Show("Monto inválido.");
                     return;
@@ -234,14 +234,14 @@ namespace Sistemas_de_Prestamos.Forms
         {
             // ClienteID
             int clienteID;
-            if (int.TryParse(textBox1.Text, out clienteID))
+            if (int.TryParse(Clienteid.Text, out clienteID))
                 SesionPrestamo.ClienteID = clienteID;
             else
                 SesionPrestamo.ClienteID = 0; // valor por defecto
 
             // Monto
             decimal monto;
-            if (decimal.TryParse(textBox2.Text, out monto))
+            if (decimal.TryParse(Monto.Text, out monto))
                 SesionPrestamo.Monto = monto;
             else
                 SesionPrestamo.Monto = 0;
@@ -275,14 +275,14 @@ namespace Sistemas_de_Prestamos.Forms
         {
             // ClienteID
             int clienteID;
-            if (int.TryParse(textBox1.Text, out clienteID))
+            if (int.TryParse(Clienteid.Text, out clienteID))
                 SesionPrestamo.ClienteID = clienteID;
             else
                 SesionPrestamo.ClienteID = 0; // valor por defecto
 
             // Monto
             decimal monto;
-            if (decimal.TryParse(textBox2.Text, out monto))
+            if (decimal.TryParse(Monto.Text, out monto))
                 SesionPrestamo.Monto = monto;
             else
                 SesionPrestamo.Monto = 0;
@@ -336,8 +336,8 @@ namespace Sistemas_de_Prestamos.Forms
 
         private void LimpiarCampos()
         {
-            textBox1.Clear(); // ClienteID
-            textBox2.Clear(); // Monto
+            Clienteid.Clear(); // ClienteID
+            Monto.Clear(); // Monto
             sueldotxt.Clear(); // Sueldo
             garantiatxt.Clear(); // Garantía
             textBox5.Clear(); // Estado
@@ -346,13 +346,12 @@ namespace Sistemas_de_Prestamos.Forms
             cuotamtxt.Clear();
             moratxt.Clear();
             dateTimePicker1.Value = DateTime.Now;
-            textBox1.Focus();
+            Clienteid.Focus();
             NombreClientetxt.Clear();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
             if (dataGridView1.CurrentRow != null)
             {
                 dataGridView1.Columns.Add("Periodo", "Periodo");
@@ -361,9 +360,23 @@ namespace Sistemas_de_Prestamos.Forms
                 dataGridView1.Columns.Add("Capital", "Capital");
                 dataGridView1.Columns.Add("Saldo", "Saldo");
             }
+
+            if (dataGridView1.CurrentRow != null)
+            {
+                Clienteid.Text = dataGridView1.CurrentRow.Cells["ClienteID"].Value.ToString();
+                Monto.Text = dataGridView1.CurrentRow.Cells["Monto"].Value.ToString();
+                numericUpDown1.Value = Convert.ToInt32(dataGridView1.CurrentRow.Cells["PlazoMeses"].Value);
+                textBox5.Text = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
+                moratxt.Text = dataGridView1.CurrentRow.Cells["MorasAcumuladas"].Value.ToString();
+
+                // Aquí llenamos el nombre del cliente
+                NombreClientetxt.Text = dataGridView1.CurrentRow.Cells["NombreCliente"].Value.ToString();
+
+                CalcularPrestamo();
+            }
         }
 
-        
+
 
 
         private void label3_Click(object sender, EventArgs e)
@@ -439,14 +452,14 @@ namespace Sistemas_de_Prestamos.Forms
         }
         private void textBox1_Leave(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBox1.Text))
+            if (string.IsNullOrWhiteSpace(Clienteid.Text))
             {
                 // Si está vacío, no hacemos nada
                 return;
             }
 
             int clienteId;
-            if (!int.TryParse(textBox1.Text.Trim(), out clienteId))
+            if (!int.TryParse(Clienteid.Text.Trim(), out clienteId))
             {
                 MessageBox.Show("ClienteID inválido.");
                 return;
@@ -475,8 +488,8 @@ namespace Sistemas_de_Prestamos.Forms
         }
             private void FrmPrestamos_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SesionPrestamo.ClienteID = int.Parse(textBox1.Text);
-            SesionPrestamo.Monto = decimal.Parse(textBox2.Text);
+            SesionPrestamo.ClienteID = int.Parse(Clienteid.Text);
+            SesionPrestamo.Monto = decimal.Parse(Monto.Text);
             SesionPrestamo.Sueldo = decimal.Parse(sueldotxt.Text);
             SesionPrestamo.Garantia = garantiatxt.Text;
             SesionPrestamo.Meses = (int)numericUpDown1.Value;
