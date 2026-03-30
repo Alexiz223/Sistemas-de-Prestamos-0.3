@@ -9,12 +9,26 @@ namespace Sistemas_de_Prestamos.BLL
     {
         private PrestamosDAL prestamosDAL = new PrestamosDAL();
         private ClientesService clienteService = new ClientesService();
+        private FondoDAL fondosDAL = new FondoDAL(); // Manejo de fondos
 
         // Crear préstamo
         public int CrearPrestamo(int clienteID, decimal monto, int plazoMeses,
                                  decimal sueldo, string garantia, DateTime fechaPrestamo,
                                  string estado)
         {
+            // Validación de sueldo
+            if (monto > sueldo * 4)
+                throw new Exception("El monto del préstamo no puede superar 4 veces el sueldo del cliente.");
+
+            // Validación de garantía
+            if (string.IsNullOrEmpty(garantia))
+                throw new Exception("La garantía es obligatoria para el préstamo.");
+
+            // Validación de fondos disponibles
+            decimal fondosDisponibles = fondosDAL.ObtenerMontoDisponible();
+            if (monto > fondosDisponibles)
+                throw new Exception("La entidad no posee fondos suficientes para otorgar este préstamo.");
+
             // Obtener datos del cliente
             DataRow cliente = clienteService.ObtenerCliente(clienteID);
             if (cliente == null)
@@ -27,8 +41,8 @@ namespace Sistemas_de_Prestamos.BLL
             decimal interesGenerado = CalcularInteresGenerado(monto, tasaInteres, plazoMeses);
             decimal montoTotal = CalcularTotal(monto, interesGenerado);
 
-            // Registrar préstamo en DAL
-            return prestamosDAL.RegistrarPrestamo(
+            // Registrar préstamo
+            int prestamoID = prestamosDAL.RegistrarPrestamo(
                 clienteID,
                 nombreCliente,
                 monto,
@@ -40,6 +54,11 @@ namespace Sistemas_de_Prestamos.BLL
                 0, // moras iniciales
                 fechaPrestamo
             );
+
+            // Actualizar fondos (restar el monto prestado)
+            fondosDAL.ActualizarMontoDisponible(fondosDisponibles - monto);
+
+            return prestamoID;
         }
 
         // Actualizar préstamo

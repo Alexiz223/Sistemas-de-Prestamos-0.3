@@ -26,8 +26,6 @@ namespace Sistemas_de_PrestamosC.BLL
             if (sueldo <= 0)
                 throw new Exception("El sueldo debe ser mayor que 0.");
 
-            if (string.IsNullOrWhiteSpace(garantia))
-                throw new Exception("El cliente debe tener una garantía.");
         }
 
         // Registrar cliente
