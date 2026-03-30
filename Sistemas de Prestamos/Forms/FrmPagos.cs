@@ -253,6 +253,20 @@ namespace Sistemas_de_Prestamos.Forms
                 dataGridView1.Columns.Add("Capital", "Capital");
                 dataGridView1.Columns.Add("Saldo", "Saldo");
             }
+
+            if (dataGridView1.CurrentRow != null)
+            {
+                // PrestamoID → textBox1
+                textBox1.Text = dataGridView1.CurrentRow.Cells["PrestamoID"].Value.ToString();
+
+                // MontoPagado → textBox2
+                textBox2.Text = dataGridView1.CurrentRow.Cells["MontoPagado"].Value.ToString();
+
+                // Si quieres duplicar la fecha en otro campo (ejemplo textBox4)
+                Fechapagodtp.Text = dataGridView1.CurrentRow.Cells["FechaPago"].Value.ToString();
+
+                estadotxt.Text = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
+            }
         }
         
 
