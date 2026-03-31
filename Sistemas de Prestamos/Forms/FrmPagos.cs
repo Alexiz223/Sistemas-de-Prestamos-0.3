@@ -79,7 +79,7 @@ namespace Sistemas_de_Prestamos.Forms
                 return;
             }
 
-            // Validar mora (opcional)
+            // Validar mora (opcional, si el usuario la escribe)
             if (!string.IsNullOrWhiteSpace(Moratxt.Text))
             {
                 if (!decimal.TryParse(Moratxt.Text.Trim(), out mora))
@@ -97,7 +97,7 @@ namespace Sistemas_de_Prestamos.Forms
 
             try
             {
-                // Registrar pago tomando el NombreCliente desde Prestamos
+                // Registrar pago (el BLL calculará la mora si se pasa 0)
                 int nuevoID = servicio.RegistrarPago(prestamoID, montoPagado, fechaPago, estado, mora);
 
                 // Mostrar el nombre del cliente en el TextBox
@@ -111,7 +111,16 @@ namespace Sistemas_de_Prestamos.Forms
                 // Refrescar label
                 lblFondoDisponible.Text = "FONDO DISPONIBLE: RD$ " + nuevoFondo.ToString("N2");
 
+                // Mensaje de confirmación
                 MessageBox.Show("Pago registrado correctamente. ID: " + nuevoID);
+
+                // Aviso adicional si el pago generó mora
+                if (mora > 0)
+                {
+                    MessageBox.Show("⚠ Este pago generó una mora de RD$ " + mora.ToString("N2"));
+                }
+
+                // Refrescar DataGrid
                 dataGridView1.DataSource = servicio.ConsultarPagos();
                 LimpiarCampos();
             }
@@ -121,7 +130,7 @@ namespace Sistemas_de_Prestamos.Forms
             }
         }
 
- 
+
 
         private void LimpiarCampos()
         {
@@ -162,6 +171,7 @@ namespace Sistemas_de_Prestamos.Forms
                 PagoService servicio = new PagoService();
                 try
                 {
+                    // Editar pago (el BLL calculará la mora si se pasa 0)
                     servicio.EditarPago(id, montoPagado, fechaPago, estado, mora);
 
                     // Mostrar el nombre del cliente en el TextBox
@@ -169,7 +179,16 @@ namespace Sistemas_de_Prestamos.Forms
                         Convert.ToInt32(textBox1.Text) // PrestamoID
                     );
 
+                    // Mensaje de confirmación
                     MessageBox.Show("Pago editado correctamente.");
+
+                    // Aviso adicional si el pago tiene mora
+                    if (mora > 0)
+                    {
+                        MessageBox.Show("⚠ Este pago tiene una mora de RD$ " + mora.ToString("N2"));
+                    }
+
+                    // Refrescar DataGrid
                     dataGridView1.DataSource = servicio.ConsultarPagos();
                     LimpiarCampos();
                 }
@@ -266,6 +285,7 @@ namespace Sistemas_de_Prestamos.Forms
                 Fechapagodtp.Text = dataGridView1.CurrentRow.Cells["FechaPago"].Value.ToString();
 
                 estadotxt.Text = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
+
             }
         }
         

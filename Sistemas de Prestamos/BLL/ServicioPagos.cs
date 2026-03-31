@@ -9,8 +9,8 @@ namespace Sistemas_de_Prestamos.BLL
         private PagosDAL pagosDAL = new PagosDAL();
         private PrestamoService prestamoService = new PrestamoService();
 
-        // Registrar pago tomando el NombreCliente desde Prestamos
-        public int RegistrarPago(int prestamoID, decimal montoPagado, DateTime fechaPago, string estado, decimal mora = 0)
+        // Registrar pago con parámetro mora
+        public int RegistrarPago(int prestamoID, decimal montoPagado, DateTime fechaPago, string estado, decimal mora)
         {
             // Buscar el préstamo para obtener el NombreCliente
             DataRow prestamo = prestamoService.ObtenerPrestamo(prestamoID);
@@ -19,8 +19,15 @@ namespace Sistemas_de_Prestamos.BLL
                 throw new Exception("Préstamo no encontrado.");
 
             string nombreCliente = prestamo["NombreCliente"].ToString();
+            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]);
 
-            // Guardar el pago con el nombre del cliente
+            // Si no se pasó mora, calcularla automáticamente
+            if (mora == 0 && fechaPago > fechaPrestamo.AddMonths(1))
+            {
+                mora = montoPagado * 0.05m; // penalidad del 5%
+            }
+
+            // Guardar el pago con la mora calculada
             return pagosDAL.RegistrarPago(prestamoID, nombreCliente, montoPagado, fechaPago, estado, mora);
         }
 
@@ -36,9 +43,23 @@ namespace Sistemas_de_Prestamos.BLL
             return pagosDAL.ObtenerPago(pagoID);
         }
 
-        // Editar pago
-        public void EditarPago(int pagoID, decimal montoPagado, DateTime fechaPago, string estado, decimal mora = 0)
+        // Editar pago con parámetro mora
+        public void EditarPago(int pagoID, decimal montoPagado, DateTime fechaPago, string estado, decimal mora)
         {
+            DataRow pago = ObtenerPago(pagoID);
+            if (pago == null)
+                throw new Exception("Pago no encontrado.");
+
+            int prestamoID = Convert.ToInt32(pago["PrestamoID"]);
+            DataRow prestamo = prestamoService.ObtenerPrestamo(prestamoID);
+            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]);
+
+            // Si no se pasó mora, calcularla automáticamente
+            if (mora == 0 && fechaPago > fechaPrestamo.AddMonths(1))
+            {
+                mora = montoPagado * 0.05m;
+            }
+
             pagosDAL.EditarPago(pagoID, montoPagado, fechaPago, estado, mora);
         }
 
@@ -48,7 +69,7 @@ namespace Sistemas_de_Prestamos.BLL
             pagosDAL.EliminarPago(pagoID);
         }
 
-        // Obtener nombre del cliente desde PrestamoID (para mostrar en el formulario)
+        // Obtener nombre del cliente desde PrestamoID
         public string ObtenerNombreClienteDesdePrestamo(int prestamoID)
         {
             DataRow prestamo = prestamoService.ObtenerPrestamo(prestamoID);

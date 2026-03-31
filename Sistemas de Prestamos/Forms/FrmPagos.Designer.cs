@@ -51,8 +51,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.lblCuotas = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -299,32 +297,11 @@
             this.panel2.Size = new System.Drawing.Size(1069, 64);
             this.panel2.TabIndex = 60;
             // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(177, 244);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(4);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(216, 22);
-            this.textBox3.TabIndex = 61;
-            // 
-            // lblCuotas
-            // 
-            this.lblCuotas.AutoSize = true;
-            this.lblCuotas.Location = new System.Drawing.Point(61, 247);
-            this.lblCuotas.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblCuotas.Name = "lblCuotas";
-            this.lblCuotas.Size = new System.Drawing.Size(49, 16);
-            this.lblCuotas.TabIndex = 62;
-            this.lblCuotas.Text = "Cuotas";
-            this.lblCuotas.Click += new System.EventHandler(this.label5_Click);
-            // 
             // FrmPagos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1067, 553);
-            this.Controls.Add(this.lblCuotas);
-            this.Controls.Add(this.textBox3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.Moratxt);
@@ -379,7 +356,5 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.Label lblCuotas;
     }
 }
