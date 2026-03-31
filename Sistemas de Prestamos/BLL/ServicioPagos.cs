@@ -12,14 +12,14 @@ namespace Sistemas_de_Prestamos.BLL
         // Registrar pago con parámetro mora
         public int RegistrarPago(int prestamoID, decimal montoPagado, DateTime fechaPago, string estado, decimal mora)
         {
-            // Buscar el préstamo para obtener el NombreCliente
+            // Buscar el préstamo en la tabla Prestamos
             DataRow prestamo = prestamoService.ObtenerPrestamo(prestamoID);
 
             if (prestamo == null)
                 throw new Exception("Préstamo no encontrado.");
 
             string nombreCliente = prestamo["NombreCliente"].ToString();
-            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]);
+            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]); // 👈 CORRECTO
 
             // Si no se pasó mora, calcularla automáticamente
             if (mora == 0 && fechaPago > fechaPrestamo.AddMonths(1))
@@ -52,7 +52,11 @@ namespace Sistemas_de_Prestamos.BLL
 
             int prestamoID = Convert.ToInt32(pago["PrestamoID"]);
             DataRow prestamo = prestamoService.ObtenerPrestamo(prestamoID);
-            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]);
+
+            if (prestamo == null)
+                throw new Exception("Préstamo no encontrado.");
+
+            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]); // 👈 CORRECTO
 
             // Si no se pasó mora, calcularla automáticamente
             if (mora == 0 && fechaPago > fechaPrestamo.AddMonths(1))
