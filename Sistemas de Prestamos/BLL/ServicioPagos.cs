@@ -19,7 +19,7 @@ namespace Sistemas_de_Prestamos.BLL
                 throw new Exception("Préstamo no encontrado.");
 
             string nombreCliente = prestamo["NombreCliente"].ToString();
-            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]); // 👈 CORRECTO
+            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaPrestamo"]); // 👈 CORRECTO
 
             // Si no se pasó mora, calcularla automáticamente
             if (mora == 0 && fechaPago > fechaPrestamo.AddMonths(1))
@@ -56,7 +56,7 @@ namespace Sistemas_de_Prestamos.BLL
             if (prestamo == null)
                 throw new Exception("Préstamo no encontrado.");
 
-            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaInicio"]); // 👈 CORRECTO
+            DateTime fechaPrestamo = Convert.ToDateTime(prestamo["FechaPrestamo"]); // 👈 CORRECTO
 
             // Si no se pasó mora, calcularla automáticamente
             if (mora == 0 && fechaPago > fechaPrestamo.AddMonths(1))
